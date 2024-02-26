@@ -9,7 +9,7 @@
 class iFrames
 {
 public:
-    virtual int addFrame(Frame *) = 0; // return total number of stored frames
+    virtual int addFrame(std::shared_ptr<Frame>) = 0; // return total number of stored frames
     virtual int getSize() = 0;
     //virtual Frame getFirstFrame();
     //virtual Frame getLastFrame();

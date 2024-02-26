@@ -14,21 +14,27 @@
 #include <chrono>
 #include "frame.hpp"
 #include "framecollection.hpp"
+#include "icamera.hpp"
+#include <memory>
+#include "icapturefeatures.hpp"
+#include "camerafeatures.hpp"
 
 using json = nlohmann::json;
 
-struct Camera
+struct Camera : ICamera
 {
     Camera(std::string name, std::string conectionString);
     Camera(json configObject);
     int activate();
     int deactivate();
     void attachLogger(spdlog::logger *);
+    bool isConected() { return this->conectionEstablished; }
+    void saveCurrentFrame();
 
 private:
     std::string conectionString, name;
     bool active;
-    cv::Mat currentFrame;
+    Frame currentFrame;
     spdlog::logger *logger;
     static void *mainLoop_helper(void *context);
     void *mainLoop();
@@ -36,6 +42,11 @@ private:
     pthread_t camera_thread;
     int collectedFrames = 0;
     FrameCollection frames;
+    bool conectionEstablished;
+    CameraFeatures* features;
+    int bufferSize;
+
+    virtual Frame* returnLastFrame(); // from interface
 };
 
 #endif // CAMERA_HPP
