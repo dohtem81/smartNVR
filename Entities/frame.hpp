@@ -11,6 +11,7 @@ struct Frame : public cv::Mat
 {
 public:
     std::chrono::system_clock::time_point getCreationTimestamp();
+    ~Frame();
 private:
     std::chrono::system_clock::time_point timeStamp = std::chrono::system_clock::now();
 };

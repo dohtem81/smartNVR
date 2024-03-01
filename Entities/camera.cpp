@@ -27,30 +27,42 @@ Camera::Camera(json configObject) :
     conectionString = configObject["connectionstring"];
     name = configObject["name"];
     frames = FrameCollection(configObject["buffersize"]);
+    savePath = configObject["saveframepath"];
+}
+
+// builder used after features are extracted from the camera
+// ---------------------------------------------------------
+void Camera::VideoMakerBuilder()
+{
+    // create video maker
+    videoMaker = VideoMaker::VideoMakerFactory(
+        std::make_shared<FileLocation>("./frames/", name + "_video.avi"),
+        std::shared_ptr<CameraFeatures>(features)
+    );
 }
 
 // -------------
 int Camera::activate()
 {
     int retry = 0;
-    // if (active)
-    // {
-    //     spdlog::error("Connection string >>" + conectionString + " already active [FAILED]");
-    //     return -1;
-    // }
+    if (this->active)
+    {
+        spdlog::error("Connection string >>" + conectionString + " already active [FAILED]");
+        return -1;
+    }
     active = true;
-    cap = std::make_unique<cv::VideoCapture>();
+    cap = std::make_shared<cv::VideoCapture>();
     spdlog::info("Connection string >>" + conectionString);
     cap->open(conectionString);
     if (cap->isOpened())
     {
-        this->features = CameraFeatures::CameraFeaturesFactory(cap.get());
+        this->features = CameraFeatures::CameraFeaturesFactory(cap);
         spdlog::info(conectionString + " features " + CameraFeatures::to_string(features));
     }
     while (!cap->isOpened())
     {
         spdlog::error("Connection string >>" + conectionString + " [FAILED]"); 
-        cap.release();
+        cap->release();
 
         // retry to connect
         if (retry++ < 3)
@@ -60,7 +72,7 @@ int Camera::activate()
         }
         else
         {
-            cap.release();
+            cap->release();
             spdlog::error("Connection string >>" + conectionString + " [FAILED]"); 
             return -1;
         }
@@ -92,6 +104,9 @@ void *Camera::mainLoop_helper(void *context)
 // -------------
 void *Camera::mainLoop()
 {
+    // build vide maker
+    VideoMakerBuilder();
+
     while(active && cap->isOpened())
     {
         if (cap->read(currentFrame))
@@ -100,6 +115,9 @@ void *Camera::mainLoop()
             currentFrame.copyTo(frameToAdd);
             collectedFrames++;
             frames.addFrame(std::make_shared<Frame>(frameToAdd));
+
+            // save video
+            //videoMaker->addFrame(std::make_shared<Frame>(frameToAdd));
         }
     }
 
@@ -109,16 +127,27 @@ void *Camera::mainLoop()
 }
 
 // -------------
-Frame* Camera::returnLastFrame()
+std::shared_ptr<Frame> Camera::returnLastFrame()
 {
-    return &(this->currentFrame);
+    return std::make_shared<Frame>(this->currentFrame);
 }
 
 // -------------
 void Camera::saveCurrentFrame()
 {
     std::string fn = this->name + ".jpg";
-    FrameSaver::SaveFrame(FileLocation("./", fn), frames.getFrame(frames.getSize() - 1).get());
+    FrameSaver::SaveFrame(FileLocation("./", fn), frames.getFrame(frames.getSize() - 1));
 
     return;
+}
+
+// -------------
+std::string Camera::to_string()
+{
+    // update features
+    this->features = CameraFeatures::CameraFeaturesFactory(cap);
+    // print values
+    std::ostringstream oss;
+    oss << this->name << " >> " << this->features->to_string();
+    return oss.str();
 }

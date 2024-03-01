@@ -2,7 +2,7 @@
 
 // save single frame into provided desination
 // ------------------------------------------
-int FrameSaver::SaveFrame(FileLocation _destination, Frame* _frame)
+int FrameSaver::SaveFrame(FileLocation _destination, std::shared_ptr<Frame> _frame)
 {
     std::string fullSavePAthAndFile = _destination.Path + "/" + _destination.File;
     cv::imwrite(fullSavePAthAndFile, *(_frame));

@@ -15,7 +15,7 @@
 class FrameSaver
 {
 public:
-    static int SaveFrame(FileLocation _destination, Frame* _frame);
+    static int SaveFrame(FileLocation _destination, std::shared_ptr<Frame> _frame);
     static int SaveFrame(
         FileLocation _destination,
         FrameCollection _sourceCollection,

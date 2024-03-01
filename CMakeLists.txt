@@ -13,6 +13,7 @@ add_executable( smartNVR
     Entities/framesaver.cpp
     Entities/camerafeatures.cpp
     Entities/nvrconfig.cpp
+    Entities/videomaker.cpp
     Application/nvrmain.cpp
     main.cpp )
 target_link_libraries( smartNVR ${OpenCV_LIBS} ) 

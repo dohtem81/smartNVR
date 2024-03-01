@@ -9,7 +9,7 @@
 class ICamera
 {
 public:
-    virtual Frame* returnLastFrame() = 0;
+    virtual std::shared_ptr<Frame> returnLastFrame() = 0;
 };
 
 #endif

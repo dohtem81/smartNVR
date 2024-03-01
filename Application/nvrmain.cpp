@@ -23,6 +23,8 @@ void *NVRMain::mainLoop()
     std::chrono::time_point<std::chrono::high_resolution_clock> creationTime = currentTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> saveTime = currentTime;
 
+    std::map<std::string, Camera>::iterator currentCamera = cameras.end();
+
     while(active)
     {
         previousTime = currentTime;
@@ -31,22 +33,24 @@ void *NVRMain::mainLoop()
         std::chrono::milliseconds timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - aliveMsgTime);
         if (timeDiff.count() > 5000)
         {
-            // log heartbeat
-            spdlog::info("smartNVR alive");
+            // check if not end of map reached
+            if (++currentCamera == cameras.end())
+                currentCamera = cameras.begin();
+            spdlog::info(currentCamera->second.to_string());
 
             aliveMsgTime = currentTime;
         }
 
-        // timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - saveTime);
-        // if (timeDiff.count() > 1000)
-        // {
-        //     for (auto& camera : cameras)
-        //     {
-        //         camera.second.saveCurrentFrame();
-        //     }
+        timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - saveTime);
+        if (timeDiff.count() > 1000)
+        {
+            for (auto& camera : cameras)
+            {
+                camera.second.saveCurrentFrame();
+            }
 
-        //     saveTime = currentTime;
-        // }        
+            saveTime = currentTime;
+        }        
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - creationTime);

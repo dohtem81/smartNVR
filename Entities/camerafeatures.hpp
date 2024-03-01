@@ -15,15 +15,20 @@ public:
     double fps;
     double frame_width;
     double frame_height;
-    static CameraFeatures* CameraFeaturesFactory(cv::VideoCapture*);
-    static std::string to_string(CameraFeatures*);
+    std::string backend;
+    int fourcc;
+    static std::shared_ptr<CameraFeatures> CameraFeaturesFactory(std::shared_ptr<cv::VideoCapture>);
+    static std::string to_string(std::shared_ptr<CameraFeatures>);
+    std::string to_string();
 
 private:
     CameraFeatures(
         double _fps,
         double _frame_width,
-        double _frame_height
-    ) : fps(_fps), frame_width(_frame_width), frame_height(_frame_height) {}
+        double _frame_height,
+        std::string _backend,
+        int _fourcc
+    ) : fps(_fps), frame_width(_frame_width), frame_height(_frame_height), backend(_backend), fourcc(_fourcc) {}
 
    
 };
