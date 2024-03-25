@@ -36,25 +36,21 @@ void *NVRMain::mainLoop()
             // check if not end of map reached
             if (++currentCamera == cameras.end())
                 currentCamera = cameras.begin();
-            spdlog::info(currentCamera->second.to_string());
 
-            aliveMsgTime = currentTime;
-        }
-
-        timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - saveTime);
-        if (timeDiff.count() > 1000)
-        {
-            for (auto& camera : cameras)
+            if (currentCamera->second.IsStreaming())
             {
-                camera.second.saveCurrentFrame();
-            }
+                VideoMaker::VideoMakerFactory(
+                    std::make_shared<FileLocation>("./videos/", currentCamera->first + "_video.avi"),
+                    currentCamera->second.GetFeatures(),
+                    currentCamera->second.GetFrameCollection()
+                );
 
-            saveTime = currentTime;
-        }        
+                aliveMsgTime = currentTime;
+            }
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - creationTime);
-        //active = timeDiff.count() < 20000;
     }
 
     spdlog::info("smartNVR will shut down");
@@ -102,10 +98,6 @@ NVRMain::NVRMain(std::shared_ptr<NVRConfig> _nvrConfig) :
         camera.second.activate();
     }
     spdlog::info("staring camera threads [DONE]");  
-
-    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-
-    //pthread_create(&nvr_thread, NULL, NVRMain::nvrMainLoop, this);  
     
     NVRMain::initialized = true;
 }

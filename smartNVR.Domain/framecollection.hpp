@@ -6,11 +6,11 @@
 
 #include <list>
 #include "frame.hpp"
-#include "iframes.hpp"
 #include <memory>
 #include <iterator>
+#include <mutex>
 
-class FrameCollection : public iFrames
+class FrameCollection
 {
 public:
     FrameCollection() {}
@@ -21,12 +21,15 @@ public:
     int addFrame(std::shared_ptr<Frame>);
     std::shared_ptr<Frame> getFrame(int);
     int getSize();
+    
+    std::mutex mtx;
+    
+    FrameCollection(const FrameCollection&);
+    FrameCollection& operator=(const FrameCollection&);
 
 private:
     std::list<std::shared_ptr<Frame>> frames;
     int bufferSize;
-    //Camera* source;
-
 };
 
 #endif

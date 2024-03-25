@@ -22,3 +22,17 @@ NVRConfig::NVRConfig(std::shared_ptr<FileLocation> _fileLocation) : fileLocation
     // set camera list
     cameraList = data["videosources"];
 }
+
+std::string NVRConfig::toString() const
+{
+    std::stringstream ss;
+    ss << "Log Files Path: " << logFilesPath;
+    ss << " Save Frame Path: " << saveFramePath;
+    ss << " Camera List: ";
+    for (const auto& camera : cameraList)
+    {
+        ss << " > " << camera;
+    }
+    ss << std::endl;
+    return ss.str();
+}

@@ -13,7 +13,7 @@ std::shared_ptr<CameraFeatures> CameraFeatures::CameraFeaturesFactory(std::share
         cap_ptr->get(cv::CAP_PROP_FRAME_WIDTH),
         cap_ptr->get(cv::CAP_PROP_FRAME_HEIGHT),
         cap_ptr->getBackendName(),
-        static_cast<int>(cap_ptr->get(cv::CAP_PROP_FOURCC))
+        cv::VideoWriter::fourcc('X', 'V', 'I', 'D') //static_cast<int>(cap_ptr->get(cv::CAP_PROP_FOURCC))
     );
 
     // convert raw pointer to chared one

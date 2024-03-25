@@ -7,13 +7,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 add_executable( smartNVR 
-    Entities/camera.cpp
-    Entities/frame.cpp
-    Entities/framecollection.cpp
-    Entities/framesaver.cpp
-    Entities/camerafeatures.cpp
-    Entities/nvrconfig.cpp
-    Entities/videomaker.cpp
-    Application/nvrmain.cpp
+    smartNVR.Domain/camerafeatures.cpp
+    smartNVR.Domain/frame.cpp
+    smartNVR.Domain/framecollection.cpp
+    smartNVR.Application/nvrmain.cpp
+    smartNVR.Application/camera.cpp
+    smartNVR.Application/framesaver.cpp
+    smartNVR.Application/videomaker.cpp
+    smartNVR.Infrastructure/nvrconfig.cpp    
     main.cpp )
 target_link_libraries( smartNVR ${OpenCV_LIBS} ) 

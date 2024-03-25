@@ -6,10 +6,11 @@
 
 #include <string>
 #include <opencv2/opencv.hpp>
-#include "filelocation.hpp"
-#include "frame.hpp"
-#include "framecollection.hpp"
+#include "../Common/FileLocation.hpp"
+#include "../smartNVR.Domain/frame.hpp"
+#include "../smartNVR.Domain/framecollection.hpp"
 #include <filesystem>
+#include <memory>
 
 
 class FrameSaver
@@ -18,8 +19,9 @@ public:
     static int SaveFrame(FileLocation _destination, std::shared_ptr<Frame> _frame);
     static int SaveFrame(
         FileLocation _destination,
-        FrameCollection _sourceCollection,
-        int index);
+        std::shared_ptr<FrameCollection> _sourceCollection);
+private:
+    static std::string CheckExtensionExistance(std::string _path);
 };
 
 #endif

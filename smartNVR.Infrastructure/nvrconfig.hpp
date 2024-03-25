@@ -5,11 +5,12 @@
 #define NVRCONFIG_HPP
 
 #include <memory>
-#include "../Entities/filelocation.hpp"
+#include "../Common/FileLocation.hpp"
+#include "../Common/iToString.hpp"
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-struct NVRConfig
+struct NVRConfig : public iToString
 {
 public:
     NVRConfig(std::shared_ptr<FileLocation>);
@@ -19,6 +20,8 @@ public:
     std::string getLogFilesPath() { return logFilesPath; }
     std::string getSaveFramePath() { return saveFramePath; }
     nlohmann::json getCameraList() { return cameraList; }
+
+    std::string toString() const override;
 private:
     std::shared_ptr<FileLocation> fileLocation;
     std::string logFilesPath;
