@@ -39,6 +39,7 @@ private:
 
     std::map<std::string, Camera> cameras;
     std::shared_ptr<spdlog::logger> logger;
+    std::map<std::string, VideoMaker*> videoMakers;
 };
 
 // forward definition of the freind method

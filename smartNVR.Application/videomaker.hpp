@@ -25,14 +25,15 @@ public:
         std::shared_ptr<FileLocation>,
         std::shared_ptr<CameraFeatures>);
 
+    int addFrame(std::shared_ptr<Frame>);
+    int addFrames(std::shared_ptr<FrameCollection>);
+    int CreateVideo(FrameCollection);
 private:
     VideoMaker(
         std::shared_ptr<FileLocation>,
         std::shared_ptr<CameraFeatures>
     );
 
-    int addFrame(std::shared_ptr<Frame>);
-    int CreateVideo(FrameCollection);
     std::unique_ptr<cv::VideoWriter> videoSink;
     std::string pathAndFile;
 };

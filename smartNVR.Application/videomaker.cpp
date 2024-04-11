@@ -77,6 +77,24 @@ int VideoMaker::addFrame(std::shared_ptr<Frame> _nextFrame)
     return 0;
 }
 
+// add frames from frame collection
+// --------------------------------
+int VideoMaker::addFrames(std::shared_ptr<FrameCollection> _frames)
+{
+    // for (int i = 0; i < _frames->getSize(); i++)
+    // {
+    //     addFrame(_frames->getFrame(i));
+    // }
+
+    // return 0; //_frames->getSize();
+
+    for (auto frame : *_frames->getFramesPointer())
+    {
+        addFrame(frame);
+    }
+    return 0;
+}
+
 // create video from the collection of frames
 // ------------------------------------------
 int VideoMaker::CreateVideo(FrameCollection _frames)

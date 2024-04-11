@@ -31,25 +31,63 @@ void *NVRMain::mainLoop()
         currentTime = std::chrono::high_resolution_clock::now();
 
         std::chrono::milliseconds timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - aliveMsgTime);
-        if (timeDiff.count() > 5000)
+
+        // save pending frames from each camera
+        for (auto& camera : cameras)
         {
-            // check if not end of map reached
-            if (++currentCamera == cameras.end())
-                currentCamera = cameras.begin();
-
-            if (currentCamera->second.IsStreaming())
+            if (camera.second.isConected() && camera.second.IsStreaming())
             {
-                VideoMaker::VideoMakerFactory(
-                    std::make_shared<FileLocation>("./videos/", currentCamera->first + "_video.avi"),
-                    currentCamera->second.GetFeatures(),
-                    currentCamera->second.GetFrameCollection()
-                );
+                // add video maker for this camera if not done already
+                if (videoMakers.find(camera.first) == videoMakers.end())
+                {
+                    std::shared_ptr<VideoMaker> vm = VideoMaker::VideoMakerFactory(
+                        std::make_shared<FileLocation>("./videos/", camera.first + "_video.avi"),
+                        camera.second.GetFeatures()
+                    );
 
-                aliveMsgTime = currentTime;
+                    videoMakers.insert({camera.first, vm.get()});
+                    spdlog::info("video maker for " + camera.first + " added");
+                } 
+                else 
+                {
+                    if (camera.second.GetFrameCollection()->getSize() > 0)
+                    {
+                        std::shared_ptr<FrameCollection> fc = camera.second.GetFrameCollection();
+
+                        std::ostringstream oss;
+                        oss << "video maker for " << camera.first << " adding " << fc->getSize() << " frames";
+                        spdlog::info(oss.str());
+
+                        videoMakers[camera.first]->addFrames(fc);
+                    }
+                }
+                // if (camera.second.GetFrameCollection()->getSize() > 0)
+                // {
+                //     videoMakers[camera.first]->addFrames(*(camera.second.GetFrameCollection()));
+                //     camera.second.EmptyFrameCollection();
+                // }
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //if (timeDiff.count() > 5000)
+        //{
+            // // check if not end of map reached
+            // if (++currentCamera == cameras.end())
+            //     currentCamera = cameras.begin();
+
+            // if (currentCamera->second.IsStreaming())
+            // {
+            //     VideoMaker::VideoMakerFactory(
+            //         std::make_shared<FileLocation>("./videos/", currentCamera->first + "_video.avi"),
+            //         currentCamera->second.GetFeatures(),
+            //         currentCamera->second.GetFrameCollection()
+            //     );
+
+            //     aliveMsgTime = currentTime;
+            // }
+        //}
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - creationTime);
     }
 

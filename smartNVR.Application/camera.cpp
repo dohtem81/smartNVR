@@ -58,41 +58,6 @@ Camera::Camera(json configObject) :
  */
 int Camera::activate()
 {
-    // int retry = 0;
-    // if (this->active)
-    // {
-    //     spdlog::error("Connection string >>" + conectionString + " already active [FAILED]");
-    //     return -1;
-    // }
-    // active = true;
-    // cap = std::make_shared<cv::VideoCapture>();
-    // spdlog::info("Connection string >>" + conectionString);
-    // cap->open(conectionString);
-    // if (cap->isOpened())
-    // {
-    //     this->features = CameraFeatures::CameraFeaturesFactory(cap);
-    //     spdlog::info(conectionString + " features " + CameraFeatures::to_string(features));
-    // }
-    // while (!cap->isOpened())
-    // {
-    //     spdlog::error("Connection string >>" + conectionString + " [FAILED]"); 
-    //     cap->release();
-
-    //     // retry to connect
-    //     if (retry++ < 3)
-    //     {
-    //         spdlog::info("Connection string >>" + conectionString);
-    //         cap->open(conectionString);
-    //     }
-    //     else
-    //     {
-    //         cap->release();
-    //         spdlog::error("Connection string >>" + conectionString + " [FAILED]"); 
-    //         return -1;
-    //     }
-    // }
-
-    // conectionEstablished = true;
     active = true;
     pthread_create(&camera_thread, NULL, Camera::mainLoop_helper, this);
     return 0;
@@ -162,6 +127,7 @@ void *Camera::mainLoop()
         }
         else // this is the case when cap is opened
         {
+            conectionEstablished = true;
             if (cap->read(currentFrame))
             {
                 Frame frameToAdd;
@@ -261,4 +227,14 @@ bool Camera::IsStreaming() const
     }
 
     return ret;
+}
+
+/**
+ * @brief Empties the frame collection.
+ *
+ * This function clears the frame collection, removing all frames.
+ */
+void Camera::EmptyFrameCollection()
+{
+    frames_ptr->clear();
 }

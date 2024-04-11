@@ -21,6 +21,8 @@ public:
     int addFrame(std::shared_ptr<Frame>);
     std::shared_ptr<Frame> getFrame(int);
     int getSize();
+    void clear();
+    std::shared_ptr<std::list<std::shared_ptr<Frame>>> getFramesPointer() { return std::make_shared<std::list<std::shared_ptr<Frame>>>(frames);};
     
     std::mutex mtx;
     

@@ -88,3 +88,18 @@ FrameCollection& FrameCollection::operator=(const FrameCollection& other)
     }
     return *this;
 }
+
+// clear collection
+// ----------------
+void FrameCollection::clear()
+{
+    // lock current collection
+    std::lock_guard<std::mutex> lock(mtx);
+    
+    while(!frames.empty())
+    {
+        std::shared_ptr<Frame> ftbd = frames.front();
+        frames.pop_front();
+        ftbd->release();
+    }
+}

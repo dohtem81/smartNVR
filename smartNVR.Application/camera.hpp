@@ -42,6 +42,7 @@ struct Camera : public iCamera
     // iCamera interface
     std::shared_ptr<Frame> GetLastFrame() const;
     std::shared_ptr<FrameCollection> GetFrameCollection() const;
+    void EmptyFrameCollection();
     bool IsStreaming() const;
 
 private:
