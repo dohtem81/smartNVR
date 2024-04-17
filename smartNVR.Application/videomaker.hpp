@@ -11,6 +11,8 @@
 #include "../smartNVR.Domain/framecollection.hpp"
 #include "../Common/FileLocation.hpp"
 
+#include "framesaver.hpp"
+
 class VideoMaker
 {
 public:
