@@ -47,12 +47,13 @@ void *NVRMain::mainLoop()
                 if (videoMakers.find(camera.first) == videoMakers.end() || currentMinutesFirstDigit != previousMinutesFirstDigit)
                 {
                     // check if videomaker contains already camera.first key, if it does, remove it
-                    if (videoMakers.find(camera.first) != videoMakers.end())
-                    {
+                    auto it = videoMakers.find(camera.first);
+                    if (it != videoMakers.end())
+                    {                        
                         videoMakers.erase(camera.first);
                         spdlog::info("video maker for " + camera.first + " removed");
                     }
-                    
+
                     std::shared_ptr<VideoMaker> vm = VideoMaker::VideoMakerFactory(
                         std::make_shared<FileLocation>("./videos/" + camera.first + "/", camera.first + "_" 
                             + FileNameGenerator::GenerateNVRChapterFileName(&currentTime)),
@@ -68,6 +69,7 @@ void *NVRMain::mainLoop()
                     {
                         std::shared_ptr<FrameCollection> fc = camera.second.GetFrameCollection();
                         videoMakers[camera.first]->addFrames(fc);
+                        fc->clear();
                     }
                 }
             }
