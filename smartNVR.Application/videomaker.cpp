@@ -101,3 +101,10 @@ int VideoMaker::CreateVideo(FrameCollection _frames)
     videoSink->release();
     return 0;
 }
+
+// close video
+// -----------
+VideoMaker::~VideoMaker()
+{
+    videoSink->release();
+}

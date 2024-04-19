@@ -30,6 +30,8 @@ public:
     int addFrame(std::shared_ptr<Frame>);
     int addFrames(std::shared_ptr<FrameCollection>);
     int CreateVideo(FrameCollection);
+
+    ~VideoMaker();
 private:
     VideoMaker(
         std::shared_ptr<FileLocation>,
