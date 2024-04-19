@@ -27,16 +27,16 @@ void *NVRMain::mainLoop()
 
     while(active)
     {
-        previousTime = currentTime;
-        currentTime = std::chrono::high_resolution_clock::now();
+            previousTime = currentTime;
+            currentTime = std::chrono::high_resolution_clock::now();
 
-        // extract minutes from current time and previous time, find first digit of minutes and compare, set flag for new vide file creation
-        std::chrono::minutes currentMinutes = std::chrono::duration_cast<std::chrono::minutes>(currentTime.time_since_epoch());
-        std::chrono::minutes previousMinutes = std::chrono::duration_cast<std::chrono::minutes>(previousTime.time_since_epoch());
-        int currentMinutesFirstDigit = currentMinutes.count() % 60 / 10;
-        int previousMinutesFirstDigit = previousMinutes.count() % 60 / 10;
+            // extract minutes from current time and previous time, find first digit of minutes and compare, set flag for new vide file creation
+            std::chrono::minutes currentMinutes = std::chrono::duration_cast<std::chrono::minutes>(currentTime.time_since_epoch());
+            std::chrono::minutes previousMinutes = std::chrono::duration_cast<std::chrono::minutes>(previousTime.time_since_epoch());
+            int currentMinutesFirstDigit = currentMinutes.count() % 60 / 10;
+            int previousMinutesFirstDigit = previousMinutes.count() % 60 / 10;
 
-        std::chrono::milliseconds timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - aliveMsgTime);
+            std::chrono::milliseconds timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - aliveMsgTime);
 
         // save pending frames from each camera
         for (auto& camera : cameras)
@@ -46,8 +46,16 @@ void *NVRMain::mainLoop()
                 // add video maker for this camera if not done already
                 if (videoMakers.find(camera.first) == videoMakers.end() || currentMinutesFirstDigit != previousMinutesFirstDigit)
                 {
+                    // check if videomaker contains already camera.first key, if it does, remove it
+                    if (videoMakers.find(camera.first) != videoMakers.end())
+                    {
+                        videoMakers.erase(camera.first);
+                        spdlog::info("video maker for " + camera.first + " removed");
+                    }
+                    
                     std::shared_ptr<VideoMaker> vm = VideoMaker::VideoMakerFactory(
-                        std::make_shared<FileLocation>("./videos/" + camera.first + "/", camera.first + "_" + std::to_string(currentMinutesFirstDigit) + "0_video.avi"),
+                        std::make_shared<FileLocation>("./videos/" + camera.first + "/", camera.first + "_" 
+                            + FileNameGenerator::GenerateNVRChapterFileName(&currentTime)),
                         camera.second.GetFeatures()
                     );
 

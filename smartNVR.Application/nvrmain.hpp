@@ -11,6 +11,7 @@
 #include "../Common/filelocation.hpp"
 #include "../smartNVR.Application/framesaver.hpp"
 #include "../smartNVR.Application/videomaker.hpp"
+#include "../Common/FileNameGenerator.hpp"
 #include <map>
 #include <string>
 #include <map>
