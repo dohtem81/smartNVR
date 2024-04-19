@@ -11,22 +11,18 @@
 class FileNameGenerator
 {
     public:
-        static std::string GenerateNVRChapterFileName(std::chrono::time_point<std::chrono::high_resolution_clock> *_refTime)
+        static std::string GenerateNVRChapterFileName(std::time_t _refTime)
         {
-            std::time_t now = std::time(nullptr);
-            std::tm* current_time = std::localtime(&now);
+            std::tm* current_time = std::localtime(&_refTime);
 
             int year = current_time->tm_year + 1900;
             int month = current_time->tm_mon + 1;
             int day = current_time->tm_mday;
+            int hour = current_time->tm_hour;
+            int minutes = (current_time->tm_min / 10) * 10;
 
-            // extract minutes from current time and previous time, find first digit of minutes and compare, set flag for new vide file creation
-            std::chrono::minutes cMinutes = std::chrono::duration_cast<std::chrono::minutes>(_refTime->time_since_epoch());
-            int currentMinutes = (cMinutes.count() % 60 / 10) * 10;         
-            int currentHour = std::chrono::duration_cast<std::chrono::hours>(_refTime->time_since_epoch()).count();
-
-            return std::to_string(year) + "_" + std::to_string(month) + "_" +  std::to_string(day)
-                + std::to_string(currentHour) + std::to_string(currentMinutes) + "_video.avi";
+            return std::to_string(year) + "_" + (month > 9 ? "" : "0") + std::to_string(month) + "_" +  (day > 9 ? "" : "0") + std::to_string(day)
+                + (hour > 9 ? "" : "0") + std::to_string(hour) + std::to_string(minutes) + "_video.avi";
         }
 };
 

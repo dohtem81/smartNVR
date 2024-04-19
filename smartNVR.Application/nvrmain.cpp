@@ -21,8 +21,7 @@ void *NVRMain::mainLoop()
     std::chrono::time_point<std::chrono::high_resolution_clock> previousTime = currentTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> aliveMsgTime = currentTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> creationTime = currentTime;
-    std::chrono::time_point<std::chrono::high_resolution_clock> saveTime = currentTime;
-
+    std::chrono::time_point<std::chrono::high_resolution_clock> saveTime = currentTime; 
     std::map<std::string, Camera>::iterator currentCamera = cameras.end();
 
     while(active)
@@ -56,7 +55,7 @@ void *NVRMain::mainLoop()
 
                     std::shared_ptr<VideoMaker> vm = VideoMaker::VideoMakerFactory(
                         std::make_shared<FileLocation>("./videos/" + camera.first + "/", camera.first + "_" 
-                            + FileNameGenerator::GenerateNVRChapterFileName(&currentTime)),
+                            + FileNameGenerator::GenerateNVRChapterFileName(std::chrono::system_clock::to_time_t(currentTime))),
                         camera.second.GetFeatures()
                     );
 
