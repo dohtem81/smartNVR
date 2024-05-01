@@ -8,7 +8,7 @@
 #include <spdlog/sinks/daily_file_sink.h>
 #include "../smartNVR.Application/camera.hpp"
 #include "../smartNVR.Infrastructure/nvrconfig.hpp"
-#include "../Common/filelocation.hpp"
+#include "../Common/FileLocation.hpp"
 #include "../smartNVR.Application/framesaver.hpp"
 #include "../smartNVR.Application/videomaker.hpp"
 #include "../Common/FileNameGenerator.hpp"
